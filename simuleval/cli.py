@@ -74,7 +74,7 @@ class DataWriter(object):
 
     def kill(self):
         if self.proc is not None:
-            self.proc.kill()
+            self.proc.terminate()
             logger.info("Close data writer")
 
 
@@ -152,7 +152,7 @@ def evaluate(args, client, server_process=None):
     data_writer.kill()
 
     if server_process is not None:
-        server_process.kill()
+        server_process.terminate()
         logger.info("Shutdown server")
 
 

@@ -45,4 +45,4 @@ def test_server():
     assert data["num_sentences"] == 10
     assert data["data_type"] == "text"
 
-    server_process.kill()
+    server_process.terminate()

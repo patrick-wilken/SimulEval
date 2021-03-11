@@ -7,7 +7,7 @@
 import setuptools
 
 setuptools.setup(
-    python_requires='>3.7.0',
+    python_requires='>3.6.0',
     name="simuleval",
     version="1.0.2",
     author="Xutai Ma",
