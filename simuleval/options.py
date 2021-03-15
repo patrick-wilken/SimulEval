@@ -44,7 +44,7 @@ def add_server_args(parser):
 
 
 def general_parser():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(allow_abbrev=False)
     parser.add_argument('--agent', default=None,
                         help='Agent type')
     parser.add_argument('--num-processes', type=int, default=1,
