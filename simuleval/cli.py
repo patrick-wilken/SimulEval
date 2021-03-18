@@ -11,6 +11,7 @@ import time
 import logging
 import json
 from multiprocessing import Pool, Process, Manager
+from concurrent.futures import ProcessPoolExecutor
 from functools import partial
 
 import simuleval
@@ -78,7 +79,7 @@ class DataWriter(object):
             logger.info("Close data writer")
 
 
-def decode(args, client, result_queue, instance_ids):
+def decode(args, client, result_queue, instance_ids, agent_id=0):
     # Find agent and load related arguments
     agent_name, agent_cls = find_agent_cls(args)
     logger.info(
@@ -99,7 +100,7 @@ def decode(args, client, result_queue, instance_ids):
         sys.exit(1)
 
     # build agents
-    agent = agent_cls(args)
+    agent = agent_cls(args, agent_id)
 
     # Decode
     for instance_id in instance_ids:
@@ -137,9 +138,9 @@ def evaluate(args, client, server_process=None):
 
         # Multi process, split test set into num_processes pieces
         with Pool(args.num_processes) as p:
-            p.map(
+            p.starmap(
                 partial(decode, args, client, result_queue),
-                split_list_into_chunks(indices, num_processes),
+                zip(split_list_into_chunks(indices, num_processes), range(num_processes)),
             )
     else:
         decode(args, client, result_queue, indices)
