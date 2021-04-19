@@ -3,6 +3,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import time
 import requests
 import logging
 from typing import Optional
@@ -25,10 +26,13 @@ class Client(object):
 
         url = f'{self.base_url}'
 
-        try:
-            _ = requests.post(url, timeout=self.timeout)
-        except Exception as e:
-            raise SystemExit(e)
+        while True:
+            try:
+                requests.post(url, timeout=self.timeout)
+                break
+            except requests.exceptions.ConnectionError:
+                logger.warning("Server not yet started up, waiting...")
+                time.sleep(10)
 
     def get_scores(self, instance_id=None):
         # end eval session
