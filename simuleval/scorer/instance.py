@@ -268,7 +268,12 @@ class AudioInstance(Instance):
         return self.len_sample_to_ms(step) + (current_time - self.start_time) * 1000
 
     def sentence_level_eval(self):
-        super().sentence_level_eval()
+        self.metrics["sentence_bleu"] = sacrebleu.sentence_bleu(
+            self.prediction(), [self.reference()]
+        ).score
+        # +1 on reference length because of EOS
+        self.metrics["latency"] = eval_all_latency(
+            self.delays, self.source_length(), self.reference_length() + 1)
         # For speech we also consider the computation-aware latency
         self.metrics["latency_ca"] = eval_all_latency(
             self.elapsed, self.source_length(), self.reference_length() + 1)
